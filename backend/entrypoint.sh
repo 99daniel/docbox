@@ -1,20 +1,9 @@
-#!/bin/sh
-#
-# entrypoint.sh – wird nur beim allerersten Start .env anlegen
+#!/usr/bin/env sh
+set -e
 
-ENV_FILE=/app/.env
-
-if [ ! -f "$ENV_FILE" ]; then
-  echo "Creating initial .env…" >&2
-  SECRET_KEY=$(python3 - << 'PYCODE'
-import secrets; print(secrets.token_urlsafe(32))
-PYCODE
-  )
-  cat <<EOF > "$ENV_FILE"
-SECRET_KEY=$SECRET_KEY
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-CELERY_BROKER_URL=redis://redis:6379/0
-EOF
+# lade .env nur, wenn sie existiert
+if [ -f "/app/.env" ]; then
+  . /app/.env
 fi
 
 # Starte dann Uvicorn
