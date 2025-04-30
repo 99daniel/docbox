@@ -1,10 +1,10 @@
 fastapi
 uvicorn[standard]
-celery
-redis
 python-multipart
 sqlalchemy
 alembic
 passlib[bcrypt]
 pyjwt[crypto]
 python-dotenv
+celery
+redis

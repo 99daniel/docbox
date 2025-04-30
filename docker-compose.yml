@@ -1,34 +1,33 @@
 version: "3.8"
-
 services:
   api:
-    build: ./backend
-    volumes:
-      - ./storage:/app/storage
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./docbox.db:/app/docbox.db
+      - storage:/app/storage
     environment:
-      # Default-SECRET_KEY, bitte in Prod ändern via ENV-Override:
-      SECRET_KEY: "_R3muyhe6Z7Nmj1LUWBsTpUJmA9g32s04ZnFIKsTWB0"
-      CELERY_BROKER_URL: "redis://redis:6379/0"
-    depends_on:
-      - redis
-    restart: unless-stopped
+      - SECRET_KEY=_R3muyhe6Z7Nmj1LUWBsTpUJmA9g32s04ZnFIKsTWB0
+      - DATABASE_URL=sqlite:///./docbox.db
+      - CELERY_BROKER_URL=redis://redis:6379/0
 
   worker:
-    build: ./worker
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
     volumes:
-      - ./storage:/worker/storage
+      - storage:/worker/storage
     environment:
-      CELERY_BROKER_URL: "redis://redis:6379/0"
-    depends_on:
-      - api
-      - redis
-    restart: unless-stopped
+      - DATABASE_URL=sqlite:///./docbox.db
+      - CELERY_BROKER_URL=redis://redis:6379/0
 
   redis:
     image: redis:7-alpine
-    restart: unless-stopped
+    ports:
+      - "6379:6379"
 
   frontend:
     build:
@@ -36,9 +35,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:80"
-    depends_on:
-      - api
-    restart: unless-stopped
 
 volumes:
   storage:

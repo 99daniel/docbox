@@ -2,3 +2,5 @@ celery
 pillow
 pytesseract
 redis
+sqlalchemy
+python-dotenv
