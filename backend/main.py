@@ -1,5 +1,9 @@
 # backend/main.py
 
+
+from dotenv import load_dotenv
+load_dotenv()   
+
 from fastapi import (
     FastAPI, Depends, HTTPException, status,
     UploadFile, File

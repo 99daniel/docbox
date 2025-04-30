@@ -1,23 +1,14 @@
 # backend/Dockerfile
 FROM python:3.11-slim
 
-# Arbeitsverzeichnis
 WORKDIR /app
 
-# 1) Python-Abhängigkeiten
+# 1) System‐ und Python‐Dependencies installieren
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 2) Entrypoint-Script kopieren, Zeilenenden bereinigen & ausführbar machen
-COPY entrypoint.sh /app/entrypoint.sh
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends dos2unix && \
-    dos2unix /app/entrypoint.sh && \
-    chmod +x /app/entrypoint.sh && \
-    rm -rf /var/lib/apt/lists/*
-
-# 3) Restlichen Code kopieren
+# 2) Quellcode (inkl. .env) ins Image kopieren
 COPY . .
 
-# 4) Entrypoint ausführen
-ENTRYPOINT ["/app/entrypoint.sh"]
+# 3) Uvicorn direkt starten – kein entrypoint.sh mehr nötig
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
