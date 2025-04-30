@@ -1,0 +1,22 @@
+/* variables.module.css */
+:root {
+    --primary: #0d9488;      /* Teal 600 */
+    --primary-dark: #0f766e; /* Teal 700 */
+    --bg: #f3f4f6;           /* Gray 100 */
+    --card-bg: #ffffff;
+    --text: #1f2937;         /* Gray 800 */
+    --border: #e5e7eb;       /* Gray 200 */
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    background: var(--bg);
+    font-family: sans-serif;
+    color: var(--text);
+  }
+  

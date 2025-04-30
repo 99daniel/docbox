@@ -1,0 +1,4 @@
+celery
+pillow
+pytesseract
+redis
