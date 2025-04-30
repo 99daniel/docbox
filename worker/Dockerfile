@@ -1,20 +1,21 @@
 # worker/Dockerfile
+FROM python:3.11-alpine
 
-FROM python:3.11-slim
 WORKDIR /worker
 
-# 1) System-Abhängigkeiten: Tesseract OCR
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      tesseract-ocr libtesseract-dev && \
-    rm -rf /var/lib/apt/lists/*
+# Tesseract und Build-Tools via apk (kein apt-get mehr)
+RUN apk add --no-cache \
+      tesseract-ocr \
+      build-base \
+      libffi-dev \
+      rust
 
-# 2) Python-Abhängigkeiten installieren
+# Python-Abhängigkeiten installieren
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt pytesseract
 
-# 3) Task-Code kopieren
-COPY tasks.py .
+# Code kopieren
+COPY . .
 
-# 4) Celery-Worker starten
+# Celery-Worker starten
 CMD ["celery", "-A", "tasks", "worker", "--loglevel=info"]

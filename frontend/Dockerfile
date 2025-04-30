@@ -1,33 +1,31 @@
 # frontend/Dockerfile
 
 ########################################
-# 1) Build-Stage: Node & Vite Build
+# 1) Build-Stage mit Node & Vite
 ########################################
 FROM node:18-alpine AS build
-
-# Arbeitsverzeichnis
 WORKDIR /app
 
-# Abhängigkeiten kopieren & installieren
+# Dependencies installieren
 COPY package*.json ./
 RUN npm ci
 
-# Quellcode kopieren und bauen
+# Quellcode kopieren & bauen
 COPY . .
 RUN npm run build
 
 ########################################
-# 2) Production-Stage: Nginx
+# 2) Production-Stage mit Nginx
 ########################################
 FROM nginx:stable-alpine
 
-# Vorherige Inhalte löschen
+# Vorherige Dateien löschen
 RUN rm -rf /usr/share/nginx/html/*
 
-# Aus der Build-Stage die statischen Dateien übernehmen
+# Bau-Ergebnis übernehmen
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Port 80 freigeben
+# HTTP-Port
 EXPOSE 80
 
 # Nginx im Vordergrund starten
