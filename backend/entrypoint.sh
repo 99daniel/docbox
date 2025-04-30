@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
-# Optional: .env laden
+# Falls es eine .env gibt, lade alle KEY=VALUE paarweise
 if [ -f "/app/.env" ]; then
   export $(grep -v '^#' /app/.env | xargs)
 fi
 
-# FastAPI starten
+# Starte FastAPI
 exec uvicorn main:app --host 0.0.0.0 --port 8000

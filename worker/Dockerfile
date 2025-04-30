@@ -3,19 +3,25 @@ FROM python:3.11-alpine
 
 WORKDIR /worker
 
-# Tesseract und Build-Tools via apk (kein apt-get mehr)
+# 1) System-Pakete installieren (Tesseract + Sprachdaten + Build-Tools für Pillow)
 RUN apk add --no-cache \
       tesseract-ocr \
+      tesseract-ocr-data-eng \
       build-base \
       libffi-dev \
-      rust
+      python3-dev \
+      jpeg-dev \
+      zlib-dev
 
-# Python-Abhängigkeiten installieren
+# 2) TESSDATA_PREFIX setzen, damit Tesseract seine .traineddata findet
+ENV TESSDATA_PREFIX=/usr/share/tessdata
+
+# 3) Python-Dependencies installieren (inkl. Pillow und Celery)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt pytesseract
 
-# Code kopieren
+# 4) Deinen Code kopieren
 COPY . .
 
-# Celery-Worker starten
+# 5) Celery-Worker starten
 CMD ["celery", "-A", "tasks", "worker", "--loglevel=info"]
