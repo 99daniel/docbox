@@ -3,14 +3,13 @@ version: "3.8"
 services:
   api:
     build: ./backend
-    env_file:
-      - ./.env
     volumes:
-      # Host-Ordner „storage“ wird in den Container gemountet
       - ./storage:/app/storage
     ports:
       - "8000:8000"
     environment:
+      # Default-SECRET_KEY, bitte in Prod ändern via ENV-Override:
+      SECRET_KEY: "_R3muyhe6Z7Nmj1LUWBsTpUJmA9g32s04ZnFIKsTWB0"
       CELERY_BROKER_URL: "redis://redis:6379/0"
     depends_on:
       - redis
@@ -18,8 +17,6 @@ services:
 
   worker:
     build: ./worker
-    env_file:
-      - ./.env
     volumes:
       - ./storage:/worker/storage
     environment:
@@ -31,8 +28,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
     restart: unless-stopped
 
   frontend:
@@ -40,7 +35,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:80"   # React-UI unter http://localhost:3000
+      - "3000:80"
     depends_on:
       - api
     restart: unless-stopped
+
+volumes:
+  storage:
