@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
-# lade .env nur, wenn sie existiert
+# Optional: .env laden
 if [ -f "/app/.env" ]; then
-  . /app/.env
+  export $(grep -v '^#' /app/.env | xargs)
 fi
 
-# Starte dann Uvicorn
+# FastAPI starten
 exec uvicorn main:app --host 0.0.0.0 --port 8000

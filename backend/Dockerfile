@@ -1,26 +1,23 @@
 # backend/Dockerfile
 FROM python:3.11-slim
+
+# Arbeitsverzeichnis
 WORKDIR /app
 
-# 1) System-Dependencies inkl. dos2unix für Zeilenendungen
+# 1) Python-Abhängigkeiten
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 2) Entrypoint-Script kopieren, Zeilenenden bereinigen & ausführbar machen
+COPY entrypoint.sh /app/entrypoint.sh
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      tesseract-ocr \
-      libtesseract-dev \
-      dos2unix && \
+    apt-get install -y --no-install-recommends dos2unix && \
+    dos2unix /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh && \
     rm -rf /var/lib/apt/lists/*
 
-# 2) Python-Dependencies installieren
-#    (wenn dein requirements.txt in backend/ liegt)
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+# 3) Restlichen Code kopieren
+COPY . .
 
-# 3) Entrypoint-Skript kopieren, in Unix-Format bringen und ausführbar machen
-COPY entrypoint.sh /app/entrypoint.sh
-RUN dos2unix /app/entrypoint.sh && chmod +x /app/entrypoint.sh
-
-# 4) Restlichen Code kopieren
-COPY . /app
-
-# 5) Entrypoint setzt .env falls nötig und startet FastAPI
-ENTRYPOINT ["./entrypoint.sh"]
+# 4) Entrypoint ausführen
+ENTRYPOINT ["/app/entrypoint.sh"]
