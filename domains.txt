@@ -34,5 +34,34 @@ api-adservices.apple.com
 books-analytics-events.apple.com
 weather-analytics-events.apple.com
 notes-analytics-events.apple.com
+adtago.s3.amazonaws.com
+analyticsengine.s3.amazonaws.com
+analytics.s3.amazonaws.com
+ads30.adcolony.com
+adc3-launch.adcolony.com
+events3alt.adcolony.com
+wd.adcolony.com
+mouseflow.com
+o2.mouseflow.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
